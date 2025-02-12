@@ -1,1 +1,60 @@
-<p>login works!</p>
+<div class="flex justify-center items-center min-h-screen">
+    <div
+        class="border-slate-400 border bg-white p-6 text-black rounded-lg flex flex-col"
+    >
+        <h1 class="font-bold text-[25px]">Login</h1>
+        <p class="mb-[28px] text-slate-500">
+            Please enter your email and password.
+        </p>
+
+        <form
+            [formGroup]="loginForm"
+            (ngSubmit)="onSubmit()"
+            class="flex flex-col"
+        >
+            <label for="email" class="mb-2 font-semibold">Email</label>
+            <input
+                type="text"
+                id="email"
+                formControlName="email"
+                class="mb-4 border border-slate-400 px-4 py-[6px] rounded-md"
+                placeholder="Email"
+            />
+            <div
+                *ngIf="
+                    loginForm.get('email')?.invalid &&
+                    loginForm.get('email')?.touched
+                "
+                class="text-red-500"
+            >
+                Email is required.
+            </div>
+
+            <label for="password" class="mb-2 font-semibold">Password</label>
+            <input
+                type="password"
+                id="password"
+                formControlName="password"
+                class="mb-4 border border-slate-400 px-4 py-[6px] rounded-md"
+                placeholder="Password"
+            />
+            <div
+                *ngIf="
+                    loginForm.get('password')?.invalid &&
+                    loginForm.get('password')?.touched
+                "
+                class="text-red-500"
+            >
+                Password is required.
+            </div>
+
+            <button
+                type="submit"
+                class="bg-black font-semibold text-white p-2 rounded-md hover:cursor-pointer"
+                [disabled]="loginForm.invalid"
+            >
+                Log In
+            </button>
+        </form>
+    </div>
+</div>
