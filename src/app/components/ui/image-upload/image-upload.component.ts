@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import {
     CdkDragDrop,
     DragDropModule,
     moveItemInArray,
 } from '@angular/cdk/drag-drop';
+import { animationFrames } from 'rxjs';
 
 @Component({
     selector: 'app-image-upload',
@@ -24,12 +25,7 @@ import {
             }
 
             .cdk-drag-animating {
-                transition: transform 150ms cubic-bezier(0, 0, 0.2, 1);
-            }
-
-            .imageList.cdk-drop-list-dragging
-                .imagePreview:not(.cdk-drag-placeholder) {
-                transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
+                transition: transform 180ms cubic-bezier(0, 0, 0.2, 1);
             }
         `,
     ],
@@ -42,14 +38,16 @@ export class ImageUploadComponent {
     draggingIndex: number | null = null;
     hoveredIndex: number | null = null;
 
+    @Output() photosChange = new EventEmitter<string[]>();
+
     constructor(private http: HttpClient) {}
 
     onFileChanges(event: Event): void {
         const target = event.target as HTMLInputElement;
         if (target.files && target.files.length) {
             this.selectedFiles.push(...Array.from(target.files));
+            this.filePreviews = [];
             this.generatePreviews();
-            console.log(this.selectedFiles);
         }
     }
 
@@ -76,10 +74,17 @@ export class ImageUploadComponent {
 
     private generatePreviews(): void {
         this.filePreviews = [];
+
+        let processed = 0;
         for (const file of this.selectedFiles) {
             const reader = new FileReader();
             reader.onload = (e: any) => {
                 this.filePreviews.push(e.target.result);
+                processed++;
+
+                if (processed === this.selectedFiles.length) {
+                    this.photosChange.emit(this.filePreviews);
+                }
             };
             reader.readAsDataURL(file);
         }
@@ -87,7 +92,8 @@ export class ImageUploadComponent {
 
     removeImage(index: number): void {
         this.selectedFiles.splice(index, 1);
-        this.generatePreviews();
+        this.filePreviews.splice(index, 1);
+        this.photosChange.emit(this.filePreviews);
     }
 
     drop(event: CdkDragDrop<string[]>) {
@@ -101,5 +107,7 @@ export class ImageUploadComponent {
             event.previousIndex,
             event.currentIndex
         );
+
+        this.photosChange.emit(this.filePreviews);
     }
 }

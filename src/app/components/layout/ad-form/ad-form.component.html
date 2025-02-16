@@ -1,10 +1,193 @@
-<form class="bg-white rounded-md p-4 my-2 flex flex-col">
+<form
+    [formGroup]="insertionForm"
+    (ngSubmit)="onSubmit()"
+    class="bg-white rounded-md p-4 my-2 flex flex-col"
+>
     <h3 class="font-bold mb-6">Informazioni generali</h3>
 
-    <label class="mb-2" for="unitName">Unit name</label>
-    <app-input id="unitName" placeholder="Unit name" type="text"></app-input>
+    <!-- Title -->
+    <label class="mb-2" for="title">Title</label>
+    <app-input
+        id="title"
+        placeholder="Title"
+        type="text"
+        formControlName="title"
+    ></app-input>
 
-    <label>Unit Images</label>
-    <app-image-upload></app-image-upload>
+    <!-- Image Upload -->
+    <label class="mt-4">Unit Images</label>
+    <app-image-upload
+        (photosChange)="onPhotosChange($event)"
+    ></app-image-upload>
 
+    <!-- Description -->
+    <label class="mt-4" for="description">Description</label>
+    <textarea
+        id="description"
+        formControlName="description"
+        class="border rounded-md p-2 border-gray-300 focus-visible:outline-blue-700"
+        rows="3"
+        placeholder="Description"
+    ></textarea>
+
+    <!-- Property Type Dropdown -->
+    <label class="mt-4" for="propertyType">Property Type</label>
+    <select
+        id="propertyType"
+        formControlName="propertyType"
+        class="border rounded-md p-2"
+    >
+        <option value="">Select property type</option>
+        <option *ngFor="let type of propertyTypes" [value]="type">
+            {{ type }}
+        </option>
+    </select>
+
+    <!-- Listing Type Dropdown -->
+    <label class="mt-4" for="listingType">Listing Type</label>
+    <select
+        id="listingType"
+        formControlName="listingType"
+        class="border rounded-md p-2"
+    >
+        <option value="">Select listing type</option>
+        <option *ngFor="let type of listingTypes" [value]="type">
+            {{ type }}
+        </option>
+    </select>
+
+    <!-- Price -->
+    <label class="mt-4" for="price">Price</label>
+    <app-input
+        id="price"
+        placeholder="Price"
+        type="number"
+        formControlName="price"
+    ></app-input>
+
+    <!-- Location -->
+    <label class="mt-4" for="address">Address</label>
+    <app-input
+        id="address"
+        placeholder="Address"
+        type="text"
+        formControlName="address"
+    ></app-input>
+
+    <label class="mt-4" for="city">City</label>
+    <app-input
+        id="city"
+        placeholder="City"
+        type="text"
+        formControlName="city"
+    ></app-input>
+
+    <label class="mt-4" for="province">Province</label>
+    <app-input
+        id="province"
+        placeholder="Province"
+        type="text"
+        formControlName="province"
+    ></app-input>
+
+    <label class="mt-4" for="postalCode">Postal Code</label>
+    <app-input
+        id="postalCode"
+        placeholder="Postal Code"
+        type="text"
+        formControlName="postalCode"
+    ></app-input>
+
+    <!-- Property Size -->
+    <label class="mt-4" for="totalArea">Total Area</label>
+    <app-input
+        id="totalArea"
+        placeholder="Total Area"
+        type="number"
+        formControlName="totalArea"
+    ></app-input>
+
+    <label class="mt-4" for="livingArea">Living Area</label>
+    <app-input
+        id="livingArea"
+        placeholder="Living Area"
+        type="number"
+        formControlName="livingArea"
+    ></app-input>
+
+    <!-- Rooms -->
+    <label class="mt-4" for="bedrooms">Bedrooms</label>
+    <app-input
+        id="bedrooms"
+        placeholder="Bedrooms"
+        type="number"
+        formControlName="bedrooms"
+    ></app-input>
+
+    <label class="mt-4" for="bathrooms">Bathrooms</label>
+    <app-input
+        id="bathrooms"
+        placeholder="Bathrooms"
+        type="number"
+        formControlName="bathrooms"
+    ></app-input>
+
+    <!-- Floor Information, Year Built, etc. -->
+    <!-- (Add additional inputs following the same pattern.) -->
+
+    <!-- Property Condition Dropdown -->
+    <label class="mt-4" for="condition">Property Condition</label>
+    <select
+        id="condition"
+        formControlName="condition"
+        class="border rounded-md p-2"
+    >
+        <option value="">Select condition</option>
+        <option *ngFor="let cond of propertyConditions" [value]="cond">
+            {{ cond }}
+        </option>
+    </select>
+
+    <!-- Amenities -->
+    <div class="mt-4 flex flex-wrap gap-4">
+        <label>
+            <input type="checkbox" formControlName="hasHeating" /> Heating
+        </label>
+        <label>
+            <input type="checkbox" formControlName="hasAirConditioning" /> Air
+            Conditioning
+        </label>
+        <label>
+            <input type="checkbox" formControlName="hasParking" /> Parking
+        </label>
+        <label>
+            <input type="checkbox" formControlName="hasElevator" /> Elevator
+        </label>
+        <label>
+            <input type="checkbox" formControlName="hasBalcony" /> Balcony
+        </label>
+        <label>
+            <input type="checkbox" formControlName="hasGarden" /> Garden
+        </label>
+        <label>
+            <input type="checkbox" formControlName="hasSwimmingPool" /> Swimming
+            Pool
+        </label>
+        <label>
+            <input type="checkbox" formControlName="isFurnished" /> Furnished
+        </label>
+    </div>
+
+    <!-- Energy Rating -->
+    <label class="mt-4" for="energyRating">Energy Rating</label>
+    <app-input
+        id="energyRating"
+        placeholder="Energy Rating"
+        type="text"
+        formControlName="energyRating"
+    ></app-input>
+
+    <button type="submit" class="mt-6 bg-blue-500 text-white p-2 rounded">
+        Submit
+    </button>
 </form>
