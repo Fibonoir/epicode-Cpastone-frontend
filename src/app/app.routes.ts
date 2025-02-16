@@ -1,14 +1,14 @@
 import { Routes } from '@angular/router';
-import { LoginComponent } from './components/login/login.component';
-import { AdminAreaComponent } from './components/admin-area/admin-area.component';
+import { AdminAreaComponent } from './components/pages/admin-area/admin-area.component';
+import { LoginComponent } from './components/pages/login/login.component';
 
 export const routes: Routes = [
     {
         path: 'login',
-        component: LoginComponent
+        component: LoginComponent,
     },
     {
         path: 'adminArea',
-        component: AdminAreaComponent
-    }
+        component: AdminAreaComponent,
+    },
 ];

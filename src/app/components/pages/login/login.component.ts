@@ -7,7 +7,7 @@ import {
     ReactiveFormsModule,
     Validators,
 } from '@angular/forms';
-import { LoginResponse } from '../../interfaces/LoginResponse';
+import { LoginResponse } from '../../../interfaces/LoginResponse';
 
 @Component({
     selector: 'app-login',
