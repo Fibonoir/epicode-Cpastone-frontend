@@ -1,13 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
     FormBuilder,
     FormGroup,
     ReactiveFormsModule,
     Validators,
 } from '@angular/forms';
-import { LoginResponse } from '../../../interfaces/LoginResponse';
+import { environment } from '../../../../envrionments/environment';
+import { AuthService } from '../../../services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-login',
@@ -15,27 +16,32 @@ import { LoginResponse } from '../../../interfaces/LoginResponse';
     templateUrl: './login.component.html',
     styles: ``,
 })
-export class LoginComponent {
-    apiUrl: string = 'http://localhost:8080/admin/login';
+export class LoginComponent implements OnInit{
+    apiUrl: string = environment.API_URL + 'admin/login';
     loginForm: FormGroup;
 
-    constructor(private fb: FormBuilder, private http: HttpClient) {
+    constructor(
+        private fb: FormBuilder,
+        private authService: AuthService,
+        private router: Router
+    ) {
         this.loginForm = this.fb.group({
             email: ['', [Validators.required, Validators.email]],
             password: ['', Validators.required],
         });
     }
 
+    ngOnInit(): void {
+        this.authService.logout()
+    }
     onSubmit() {
         if (this.loginForm.valid) {
             const { email, password } = this.loginForm.value;
 
-            this.http.post<LoginResponse>(this.apiUrl, { email, password }).subscribe({
+            this.authService.login(email, password).subscribe({
                 next: (response) => {
                     console.log('Login successful: ', response.data);
-                    localStorage.setItem('token', response.data.token);
-                    window.location.href = '/dashboard';
-
+                    this.router.navigate(['/adminArea']);
                 },
                 error: (error) => {
                     console.log('Login failed: ', error);

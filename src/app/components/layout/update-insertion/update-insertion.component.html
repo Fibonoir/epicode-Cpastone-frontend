@@ -1,0 +1,400 @@
+<form
+    [formGroup]="updateInsertionForm"
+    (ngSubmit)="onSubmit()"
+    class="bg-white relative dark:bg-zinc-900 dark:text-gray-300 rounded-md p-4 my-2 flex flex-col border dark:border-gray-700 border-gray-200 shadow-2xl"
+>
+    <button
+        type="button"
+        class="py-[10px] absolute right-[16px] px-4 cursor-pointer bg-gray-700 hover:bg-red-600 text-white hover:text-gray-100 drop-shadow-lg rounded-sm"
+        (click)="deleteInsertion()"
+
+    >
+        <i class="fa-solid fa-trash"></i>
+    </button>
+    <div class="flex flex-col">
+        <!-- Title -->
+        <app-section-title title="Title"></app-section-title>
+        <app-input
+            id="title"
+            placeholder="Title"
+            type="text"
+            formControlName="title"
+        ></app-input>
+        <app-validation-message
+            [control]="updateInsertionForm.get('title')"
+        ></app-validation-message>
+
+        <!-- Existing photos with drag & drop reorder -->
+        <app-section-title
+            class="mt-8"
+            title="Current Photos"
+        ></app-section-title>
+        <div
+            class="flex flex-wrap"
+            cdkDropList
+            cdkDropListOrientation="mixed"
+            (cdkDropListDropped)="dropExistingPhotos($event)"
+        >
+            <div
+                *ngFor="let photo of existingPhotos; let i = index"
+                cdkDrag
+                (cdkDragStarted)="onDragStarted()"
+                (cdkDragEnded)="onDragEnded()"
+                class="relative rounded-lg me-2 mb-2"
+            >
+                <img
+                    [src]="photo.secureUrl"
+                    alt="Existing Photo"
+                    class="w-20 h-20 object-cover rounded-lg cursor-grab"
+                />
+
+                <button
+                    (click)="openConfirmModal(i); $event.stopPropagation()"
+                    type="button"
+                    class="absolute top-1 right-1 bg-gray-300 hover:text-white hover:bg-red-600 dark:hover:bg-red-800 dark:hover:text-slate-200 text-slate-700 rounded-sm shadow-black shadow-lg w-6 cursor-pointer aspect-square text-xs font-bold flex items-center justify-center"
+                >
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Confirmation Modal -->
+        <div
+            *ngIf="isConfirmModalVisible"
+            class="fixed inset-0 flex items-center justify-center bg-transparent drop-shadow-[0_0_60px_rgba(0,0,0,0.80)] z-50"
+        >
+            <div
+                class="bg-white dark:bg-zinc-800 p-6 rounded-md shadow-lg max-w-sm w-full"
+            >
+                <h2
+                    class="text-lg font-bold mb-4 text-gray-800 dark:text-gray-200"
+                >
+                    Confirm Deletion
+                </h2>
+                <p class="mb-6 text-gray-700 dark:text-gray-300">
+                    Are you sure you want to delete this image?
+                </p>
+                <div class="flex justify-end space-x-2">
+                    <button
+                        (click)="cancelDeletion()"
+                        type="button"
+                        class="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400 cursor-pointer"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        (click)="confirmDeletion()"
+                        type="button"
+                        class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 cursor-pointer"
+                    >
+                        Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Image upload for new photos -->
+        <app-section-title class="mt-8" title="New Photos"></app-section-title>
+        <app-image-upload
+            (photosChange)="onPhotosChange($event)"
+            (filesChange)="onFilesChange($event)"
+        ></app-image-upload>
+
+        <!-- Description -->
+        <app-section-title class="mt-8" title="Description"></app-section-title>
+        <textarea
+            id="description"
+            formControlName="description"
+            class="border-2 rounded-md p-2 dark:bg-zinc-800 dark:focus:outline-indigo-500 dark:focus:outline-1 dark:border-gray-600 border-gray-300 focus:outline-2 focus:outline-blue-200 row-auto"
+            rows="15"
+            placeholder="Description"
+        ></textarea>
+    </div>
+
+    <app-separator class="my-10"></app-separator>
+
+    <!-- Price & Conditions -->
+    <app-section-title title="Price & Conditions"></app-section-title>
+    <div class="flex flex-wrap">
+        <!-- Price -->
+        <div class="flex flex-col w-1/2">
+            <label class="mb-1" for="price">Price</label>
+            <app-input
+                id="price"
+                placeholder="Price"
+                type="number"
+                formControlName="price"
+            ></app-input>
+            <app-validation-message
+                [control]="updateInsertionForm.get('price')"
+            ></app-validation-message>
+        </div>
+
+        <!-- Listing Type Dropdown -->
+        <div class="flex flex-col w-2/3 my-2">
+            <label class="mb-1" for="listingType">Listing Type</label>
+            <select
+                id="listingType"
+                formControlName="listingType"
+                class="border-2 border-gray-400 rounded-md px-1 py-2 focus:outline-2 focus:outline-blue-200 dark:bg-zinc-800 dark:focus:outline-indigo-500 dark:focus:outline-1 dark:border-gray-600"
+            >
+                <option value="">Select listing type</option>
+                <option *ngFor="let type of listingTypes" [value]="type">
+                    {{ type }}
+                </option>
+            </select>
+            <app-validation-message
+                [control]="updateInsertionForm.get('listingType')"
+            ></app-validation-message>
+        </div>
+
+        <!-- Property Type Dropdown -->
+        <div class="flex flex-col w-2/3 my-2">
+            <label class="mb-1" for="propertyType">Property Type</label>
+            <select
+                id="propertyType"
+                formControlName="propertyType"
+                class="border-2 rounded-md px-1 py-2 border-gray-400 focus:outline-2 focus:outline-blue-500 dark:bg-zinc-800 dark:focus:outline-indigo-500 dark:focus:outline-1 dark:border-gray-600"
+            >
+                <option value="">Select property type</option>
+                <option *ngFor="let type of propertyTypes" [value]="type">
+                    {{ type }}
+                </option>
+            </select>
+            <app-validation-message
+                [control]="updateInsertionForm.get('propertyType')"
+            ></app-validation-message>
+        </div>
+
+        <!-- Property Condition Dropdown -->
+        <div class="flex flex-col w-2/3 my-2">
+            <label class="mb-1" for="condition">Property Condition</label>
+            <select
+                id="condition"
+                formControlName="condition"
+                class="border-2 rounded-md px-1 py-2 border-gray-400 focus:outline-2 focus:outline-blue-500 dark:bg-zinc-800 dark:focus:outline-indigo-500 dark:focus:outline-1 dark:border-gray-600"
+            >
+                <option value="">Select condition</option>
+                <option *ngFor="let cond of propertyConditions" [value]="cond">
+                    {{ cond }}
+                </option>
+            </select>
+            <app-validation-message
+                [control]="updateInsertionForm.get('condition')"
+            ></app-validation-message>
+        </div>
+    </div>
+
+    <app-separator class="my-10"></app-separator>
+
+    <!-- Location -->
+    <app-section-title title="Location"></app-section-title>
+    <div class="flex flex-wrap">
+        <!-- Address -->
+        <div class="w-1/2 flex flex-col mb-4">
+            <label class="mb-1" for="address">Address</label>
+            <app-input
+                id="address"
+                placeholder="Address"
+                type="text"
+                formControlName="address"
+            ></app-input>
+            <app-validation-message
+                [control]="updateInsertionForm.get('address')"
+            ></app-validation-message>
+        </div>
+
+        <!-- City -->
+        <div class="w-1/2 flex flex-col mb-4">
+            <label class="mb-1" for="city">City</label>
+            <app-input
+                id="city"
+                placeholder="City"
+                type="text"
+                formControlName="city"
+            ></app-input>
+            <app-validation-message
+                [control]="updateInsertionForm.get('city')"
+            ></app-validation-message>
+        </div>
+
+        <!-- Province -->
+        <div class="w-1/2 flex flex-col mb-4">
+            <label class="mb-1" for="province">Province</label>
+            <app-input
+                id="province"
+                placeholder="Province"
+                type="text"
+                formControlName="province"
+            ></app-input>
+            <app-validation-message
+                [control]="updateInsertionForm.get('province')"
+            ></app-validation-message>
+        </div>
+
+        <!-- Postal Code -->
+        <div class="w-1/2 flex flex-col mb-4">
+            <label class="mb-1" for="postalCode">Postal Code</label>
+            <app-input
+                id="postalCode"
+                placeholder="Postal Code"
+                type="text"
+                formControlName="postalCode"
+            ></app-input>
+            <app-validation-message
+                [control]="updateInsertionForm.get('postalCode')"
+            ></app-validation-message>
+        </div>
+    </div>
+
+    <app-separator class="my-10"></app-separator>
+
+    <!-- Rooms -->
+    <app-section-title title="Rooms"></app-section-title>
+    <div class="flex flex-wrap">
+        <!-- Total Area -->
+        <div class="w-1/2 flex flex-col mb-4">
+            <label class="mb-1" for="totalArea">Total Area</label>
+            <app-input
+                id="totalArea"
+                placeholder="Total Area"
+                type="number"
+                formControlName="totalArea"
+            ></app-input>
+            <app-validation-message
+                [control]="updateInsertionForm.get('totalArea')"
+            ></app-validation-message>
+        </div>
+
+        <!-- Living Area -->
+        <div class="w-1/2 flex flex-col mb-4">
+            <label class="mb-1" for="livingArea">Living Area</label>
+            <app-input
+                id="livingArea"
+                placeholder="Living Area"
+                type="number"
+                formControlName="livingArea"
+            ></app-input>
+        </div>
+
+        <!-- Bedrooms -->
+        <div class="w-1/2 flex flex-col mb-4">
+            <label class="mb-1" for="bedrooms">Bedrooms</label>
+            <app-input
+                id="bedrooms"
+                placeholder="Bedrooms"
+                type="number"
+                formControlName="bedrooms"
+            ></app-input>
+            <app-validation-message
+                [control]="updateInsertionForm.get('bedrooms')"
+            ></app-validation-message>
+        </div>
+
+        <!-- Bathrooms -->
+        <div class="w-1/2 flex flex-col mb-4">
+            <label class="mb-1" for="bathrooms">Bathrooms</label>
+            <app-input
+                id="bathrooms"
+                placeholder="Bathrooms"
+                type="number"
+                formControlName="bathrooms"
+            ></app-input>
+            <app-validation-message
+                [control]="updateInsertionForm.get('bathrooms')"
+            ></app-validation-message>
+        </div>
+    </div>
+
+    <app-separator class="my-10"></app-separator>
+
+    <!-- Additional Information -->
+    <app-section-title title="Additional Information"></app-section-title>
+    <div class="flex flex-wrap">
+        <label class="w-1/2">
+            <input
+                class="align-middle aspect-square w-[18px] me-2"
+                type="checkbox"
+                formControlName="hasHeating"
+            />
+            Heating
+        </label>
+        <label class="w-1/2">
+            <input
+                class="align-middle aspect-square w-[18px] me-2"
+                type="checkbox"
+                formControlName="hasAirConditioning"
+            />
+            Air Conditioning
+        </label>
+        <label class="w-1/2">
+            <input
+                class="align-middle aspect-square w-[18px] me-2"
+                type="checkbox"
+                formControlName="hasParking"
+            />
+            Parking
+        </label>
+        <label class="w-1/2">
+            <input
+                class="align-middle aspect-square w-[18px] me-2"
+                type="checkbox"
+                formControlName="hasElevator"
+            />
+            Elevator
+        </label>
+        <label class="w-1/2">
+            <input
+                class="align-middle aspect-square w-[18px] me-2"
+                type="checkbox"
+                formControlName="hasBalcony"
+            />
+            Balcony
+        </label>
+        <label class="w-1/2">
+            <input
+                class="align-middle aspect-square w-[18px] me-2"
+                type="checkbox"
+                formControlName="hasGarden"
+            />
+            Garden
+        </label>
+        <label class="w-1/2">
+            <input
+                class="align-middle aspect-square w-[18px] me-2"
+                type="checkbox"
+                formControlName="hasSwimmingPool"
+            />
+            Swimming Pool
+        </label>
+        <label class="w-1/2">
+            <input
+                class="align-middle aspect-square w-[18px] me-2"
+                type="checkbox"
+                formControlName="isFurnished"
+            />
+            Furnished
+        </label>
+    </div>
+
+    <!-- Energy Rating -->
+    <label class="mt-4 mb-1" for="energyRating">Energy Rating</label>
+    <app-input
+        id="energyRating"
+        placeholder="Energy Rating"
+        type="text"
+        formControlName="energyRating"
+    ></app-input>
+
+    <button
+        type="submit"
+        class="mt-6 dark:bg-indigo-700 font-bold text-lg bg-blue-500 text-white p-2 rounded cursor-pointer flex justify-center items-center"
+    >
+        <div
+            *ngIf="submitting"
+            class="w-5 h-5 border-4 me-6 border-gray-200 border-t-4 border-t-blue-500 rounded-full animate-spin"
+        ></div>
+        Update
+    </button>
+    <app-invalid-form *ngIf="isInvalid"></app-invalid-form>
+</form>

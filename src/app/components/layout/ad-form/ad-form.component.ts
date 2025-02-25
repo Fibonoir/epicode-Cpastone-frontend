@@ -1,88 +1,112 @@
-import { Component, OnInit } from '@angular/core';
-import { InputComponent } from '../../ui/input/input.component';
+import { forkJoin, map } from 'rxjs';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import {
+    FormBuilder,
+    FormGroup,
+    Validators,
+    ReactiveFormsModule,
+} from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
-import { ImageUploadComponent } from '../../ui/image-upload/image-upload.component';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { PropertyType } from '../../../interfaces/enums/PropertyType';
+import { ListingType } from '../../../interfaces/enums/ListingType';
+import { PropertyCondition } from '../../../interfaces/enums/PropertyCondition';
+import { createAdForm } from './ad-form.config';
+import { InsertionService } from '../../../services/insertion.service';
+import { InsertionResponse } from '../../../interfaces/listings/InsertionResponse';
+import { InputComponent } from '../../reusables/input/input.component';
+import { ImageUploadComponent } from '../../reusables/image-upload/image-upload.component';
+import { SeparatorComponent } from '../../reusables/separator/separator.component';
+import { SectionTitleComponent } from '../../reusables/section-title/section-title.component';
+import { ValidationMessageComponent } from '../../reusables/validation-message/validation-message.component';
+import { InvalidFormComponent } from '../../reusables/invalid-form/invalid-form.component';
 
-export enum PropertyType {
-    APARTMENT = 'APARTMENT',
-    HOUSE = 'HOUSE',
-    VILLA = 'VILLA',
-}
-
-export enum ListingType {
-    SALE = 'SALE',
-    RENT = 'RENT',
-}
-
-export enum PropertyCondition {
-    NEW = 'NEW',
-    GOOD = 'GOOD',
-    NEEDS_RENOVATION = 'NEEDS_RENOVATION',
-}
 
 @Component({
     selector: 'app-ad-form',
+    standalone: true,
     imports: [
-        InputComponent,
-        CommonModule,
-        ImageUploadComponent,
-        ReactiveFormsModule
-    ],
+    CommonModule,
+    ReactiveFormsModule,
+    InputComponent,
+    ImageUploadComponent,
+    SeparatorComponent,
+    SectionTitleComponent,
+    ValidationMessageComponent,
+    InvalidFormComponent
+],
     templateUrl: './ad-form.component.html',
-    styles: ``,
+    styles: [],
 })
 export class AdFormComponent implements OnInit {
+
+    @Output() submitSuccessful = new EventEmitter<void>()
+
     insertionForm!: FormGroup;
 
-    // Arrays for our dropdowns (the enum values):
     propertyTypes = Object.values(PropertyType);
     listingTypes = Object.values(ListingType);
     propertyConditions = Object.values(PropertyCondition);
 
+    selectedFiles: File[] = [];
+    secureURLs: string[] = [];
+
+    isInvalid: boolean = false;
+
+    insertions: InsertionResponse[] = [];
+
+    submitting: boolean = false;
+
+    constructor(
+        private fb: FormBuilder,
+        private insertionService: InsertionService
+    ) {}
+
     ngOnInit(): void {
-      this.insertionForm = new FormGroup({
-        title: new FormControl('', Validators.required),
-        description: new FormControl(''),
-        propertyType: new FormControl('', Validators.required),
-        listingType: new FormControl('', Validators.required),
-        price: new FormControl('', [Validators.required, Validators.min(0.01)]),
-        address: new FormControl('', Validators.required),
-        city: new FormControl('', Validators.required),
-        province: new FormControl('', Validators.required),
-        postalCode: new FormControl('', Validators.required),
-        totalArea: new FormControl('', [Validators.required, Validators.min(0.01)]),
-        livingArea: new FormControl(''),
-        bedrooms: new FormControl('', [Validators.required, Validators.min(0)]),
-        bathrooms: new FormControl('', [Validators.required, Validators.min(0)]),
-        additionalRooms: new FormControl(''),
-        floorNumber: new FormControl(''),
-        totalFloors: new FormControl(''),
-        yearBuilt: new FormControl(''),
-        condition: new FormControl('', Validators.required),
-        hasHeating: new FormControl(false),
-        hasAirConditioning: new FormControl(false),
-        hasParking: new FormControl(false),
-        hasElevator: new FormControl(false),
-        hasBalcony: new FormControl(false),
-        hasGarden: new FormControl(false),
-        hasSwimmingPool: new FormControl(false),
-        isFurnished: new FormControl(false),
-        energyRating: new FormControl(''),
-        photos: new FormControl([]) // This will be updated by the image upload component
-      });
+        this.insertionForm = createAdForm(this.fb);
     }
 
-    // This method is triggered when the image-upload component emits new photos.
     onPhotosChange(photos: string[]): void {
-      this.insertionForm.patchValue({ photos: photos });
+        this.insertionForm.patchValue({ photos });
+    }
+
+    onFilesChange(files: File[]): void {
+        this.selectedFiles = files;
     }
 
     onSubmit(): void {
-      if (this.insertionForm.valid) {
-        // Here you would typically send this.insertionForm.value to your backend.
-        console.log('Submission:', this.insertionForm.value);
-      }
+        this.isInvalid = false;
+        if (this.insertionForm.invalid) {
+            console.error('Form is invalid');
+            this.isInvalid = true;
+            this.submitting = false;
+            return;
+        }
+        this.submitting = true;
+
+        const formData = new FormData();
+
+        Object.keys(this.insertionForm.value).forEach((key) => {
+            if (key !== 'photos') {
+                formData.append(key, this.insertionForm.value[key]);
+            }
+        });
+
+        if (this.selectedFiles && this.selectedFiles.length > 0) {
+            this.selectedFiles.forEach((file) => {
+                formData.append('photos', file);
+            });
+        }
+
+        this.insertionService.createInsertion(formData).subscribe({
+            next: (response) => {
+                this.submitting = false;
+                console.log('Insertion created:', response);
+                this.submitSuccessful.emit()
+            },
+            error: (err) => {
+                this.submitting = false
+                console.error('Error creating insertion:', err);
+            },
+        });
     }
 }

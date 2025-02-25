@@ -1,0 +1,31 @@
+<div class="relative w-full overflow-hidden">
+    <!-- Image Track -->
+    <div
+        class="flex transition-transform duration-500 ease-in-out"
+        [style.transform]="'translateX(-' + currentIndex * 100 + '%)'"
+    >
+        <img
+            *ngFor="let image of images; let i = index"
+            [src]="image.secureUrl"
+            alt="Image Carousel"
+            class="w-full object-cover object-center rounded-md flex-shrink-0"
+            [ngClass]="carouselHeight"
+        />
+    </div>
+
+    <!-- Previous Button -->
+    <button
+        (click)="$event.stopPropagation(); prevImage()"
+        class="absolute left-2 hover:animate-pulse top-1/2 transform -translate-y-1/2 bg-gray-300 text-white aspect-square w-[35px] rounded-full hover:bg-gray-500 focus:outline-none"
+    >
+        <i class="fa-solid fa-chevron-left"></i>
+    </button>
+
+    <!-- Next Button -->
+    <button
+        (click)="$event.stopPropagation(); nextImage()"
+        class="absolute right-2 hover:animate-pulse top-1/2 transform -translate-y-1/2 bg-gray-300 text-white w-[35px] aspect-square rounded-full hover:bg-gray-500 focus:outline-none"
+    >
+        <i class="fa-solid fa-chevron-right"></i>
+    </button>
+</div>

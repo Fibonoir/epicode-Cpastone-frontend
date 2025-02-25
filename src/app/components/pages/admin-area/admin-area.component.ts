@@ -1,10 +1,9 @@
 import { Component } from '@angular/core';
-import { SidebarComponent } from '../../layout/sidebar/sidebar.component';
-import { DashboardComponent } from '../dashboard/dashboard.component';
+import { DashboardComponent } from '../../layout/dashboard/dashboard.component';
 
 @Component({
     selector: 'app-admin-area',
-    imports: [SidebarComponent, DashboardComponent],
+    imports: [DashboardComponent],
     templateUrl: './admin-area.component.html',
     styles: ``,
 })

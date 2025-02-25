@@ -1,0 +1,29 @@
+<div class="relative inline-flex items-center">
+    <input
+        [type]="type"
+        [id]="id"
+        [placeholder]="placeholder"
+        [ngClass]="{ 'text-center ': type === 'number' }"
+        class="py-1 px-2 border-2 dark:bg-zinc-800 dark:border-gray-600 dark:focus:outline-1 dark:focus:outline-indigo-500 border-gray-400 dark:text-white rounded focus:outline-2 focus:outline-blue-200"
+        [value]="value"
+        (input)="handleInput($event)"
+        (blur)="onTouched()"
+    />
+
+    <ng-container *ngIf="type === 'number'">
+        <button
+            type="button"
+            class="absolute left-1 font-extrabold px-4 border-gray-400 dark:hover:text-sky-500  hover:text-red-700  border-e-2 hover:cursor-pointer"
+            (click)="decrement()"
+        >
+            &#8722;
+        </button>
+        <button
+            type="button"
+            class="absolute right-1 font-extrabold px-4 border-gray-400 dark:hover:text-sky-500   hover:text-red-700  border-s-2 hover:cursor-pointer"
+            (click)="increment()"
+        >
+            &#43;
+        </button>
+    </ng-container>
+</div>

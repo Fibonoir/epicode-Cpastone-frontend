@@ -1,7 +1,8 @@
 export interface LoginResponse {
     status: string
     data: {
-        token: string
+        accessToken: string
+        refreshToken: string
     }
     message: string
 }

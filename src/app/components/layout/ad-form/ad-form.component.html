@@ -1,185 +1,315 @@
 <form
     [formGroup]="insertionForm"
     (ngSubmit)="onSubmit()"
-    class="bg-white rounded-md p-4 my-2 flex flex-col"
+    class="bg-white dark:bg-zinc-900 dark:text-gray-300 rounded-md p-4 my-2 flex flex-col border dark:border-gray-700 border-gray-200"
 >
-    <h3 class="font-bold mb-6">Informazioni generali</h3>
+    <app-section-title title="Unit information"></app-section-title>
 
-    <!-- Title -->
-    <label class="mb-2" for="title">Title</label>
-    <app-input
-        id="title"
-        placeholder="Title"
-        type="text"
-        formControlName="title"
-    ></app-input>
+    <div class="flex flex-col">
+        A
+        <!-- Title -->
+        <label class="mb-1" for="title">Title</label>
+        <app-input
+            id="title"
+            placeholder="Title"
+            type="text"
+            formControlName="title"
+        ></app-input>
+        <app-validation-message
+            [isInvalid]="isInvalid"
+            [control]="insertionForm.get('title')"
+        ></app-validation-message>
 
-    <!-- Image Upload -->
-    <label class="mt-4">Unit Images</label>
-    <app-image-upload
-        (photosChange)="onPhotosChange($event)"
-    ></app-image-upload>
+        <!-- Image Upload -->
+        <label class="mb-2 mt-4">Unit Images</label>
+        <app-image-upload
+            (photosChange)="onPhotosChange($event)"
+            (filesChange)="onFilesChange($event)"
+        ></app-image-upload>
 
-    <!-- Description -->
-    <label class="mt-4" for="description">Description</label>
-    <textarea
-        id="description"
-        formControlName="description"
-        class="border rounded-md p-2 border-gray-300 focus-visible:outline-blue-700"
-        rows="3"
-        placeholder="Description"
-    ></textarea>
+        <!-- Description -->
+        <label class="mt-4 mb-1" for="description">Description</label>
+        <textarea
+            id="description"
+            formControlName="description"
+            class="border-2 rounded-md p-2 dark:bg-zinc-800 dark:focus:outline-indigo-500 dark:focus:outline-1 dark:border-gray-600 border-gray-300 focus:outline-2 focus:outline-blue-200"
+            rows="15"
+            placeholder="Description"
+        ></textarea>
+    </div>
+
+    <app-separator class="my-10"></app-separator>
 
     <!-- Property Type Dropdown -->
-    <label class="mt-4" for="propertyType">Property Type</label>
-    <select
-        id="propertyType"
-        formControlName="propertyType"
-        class="border rounded-md p-2"
-    >
-        <option value="">Select property type</option>
-        <option *ngFor="let type of propertyTypes" [value]="type">
-            {{ type }}
-        </option>
-    </select>
+    <app-section-title title="Price & Conditions"></app-section-title>
+    <div class="flex flex-wrap">
+        <!-- Price -->
+        <div class="flex flex-col w-1/2">
+            <label class="mb-1" for="price">Price</label>
+            <app-input
+                id="price"
+                placeholder="Price"
+                type="number"
+                formControlName="price"
+            ></app-input>
+            <app-validation-message
+                [isInvalid]="isInvalid"
+                [control]="insertionForm.get('price')"
+            ></app-validation-message>
+        </div>
 
-    <!-- Listing Type Dropdown -->
-    <label class="mt-4" for="listingType">Listing Type</label>
-    <select
-        id="listingType"
-        formControlName="listingType"
-        class="border rounded-md p-2"
-    >
-        <option value="">Select listing type</option>
-        <option *ngFor="let type of listingTypes" [value]="type">
-            {{ type }}
-        </option>
-    </select>
+        <!-- Listing Type Dropdown -->
+        <div class="flex flex-col w-2/3 my-2">
+            <label class="mb-1" for="listingType">Listing Type</label>
+            <select
+                id="listingType"
+                formControlName="listingType"
+                class="border-2 border-gray-400 rounded-md px-1 py-2 focus:outline-2 focus:outline-blue-200 dark:bg-zinc-800 dark:focus:outline-indigo-500 dark:focus:outline-1 dark:border-gray-600"
+            >
+                <option value="">Select listing type</option>
+                <option
+                    class=""
+                    *ngFor="let type of listingTypes"
+                    [value]="type"
+                >
+                    {{ type }}
+                </option>
+            </select>
+            <app-validation-message
+                [isInvalid]="isInvalid"
+                [control]="insertionForm.get('listingType')"
+            ></app-validation-message>
+        </div>
 
-    <!-- Price -->
-    <label class="mt-4" for="price">Price</label>
-    <app-input
-        id="price"
-        placeholder="Price"
-        type="number"
-        formControlName="price"
-    ></app-input>
+        <div class="flex flex-col w-2/3 my-2">
+            <label class="mb-1" for="propertyType">Property Type</label>
+            <select
+                id="propertyType"
+                formControlName="propertyType"
+                class="border-2 rounded-md px-1 py-2 border-gray-400 focus:outline-2 focus:outline-blue-500 dark:bg-zinc-800 dark:focus:outline-indigo-500 dark:focus:outline-1 dark:border-gray-600"
+            >
+                <option value="">Select property type</option>
+                <option *ngFor="let type of propertyTypes" [value]="type">
+                    {{ type }}
+                </option>
+            </select>
+            <app-validation-message
+                [isInvalid]="isInvalid"
+                [control]="insertionForm.get('propertyType')"
+            ></app-validation-message>
+        </div>
 
-    <!-- Location -->
-    <label class="mt-4" for="address">Address</label>
-    <app-input
-        id="address"
-        placeholder="Address"
-        type="text"
-        formControlName="address"
-    ></app-input>
+        <div class="flex flex-col w-2/3 my-2">
+            <label class="mb-1" for="condition">Property Condition</label>
+            <select
+                id="condition"
+                formControlName="condition"
+                class="border-2 rounded-md px-1 py-2 border-gray-400 focus:outline-2 focus:outline-blue-500 dark:bg-zinc-800 dark:focus:outline-indigo-500 dark:focus:outline-1 dark:border-gray-600"
+            >
+                <option value="">Select condition</option>
+                <option *ngFor="let cond of propertyConditions" [value]="cond">
+                    {{ cond }}
+                </option>
+            </select>
+            <app-validation-message
+                [isInvalid]="isInvalid"
+                [control]="insertionForm.get('condition')"
+            ></app-validation-message>
+        </div>
+    </div>
 
-    <label class="mt-4" for="city">City</label>
-    <app-input
-        id="city"
-        placeholder="City"
-        type="text"
-        formControlName="city"
-    ></app-input>
+    <app-separator class="my-10"></app-separator>
 
-    <label class="mt-4" for="province">Province</label>
-    <app-input
-        id="province"
-        placeholder="Province"
-        type="text"
-        formControlName="province"
-    ></app-input>
+    <app-section-title title="Location"></app-section-title>
+    <div class="flex flex-wrap">
+        <!-- Location -->
+        <div class="w-1/2 flex flex-col mb-4">
+            <label class="mb-1" for="address">Address</label>
+            <app-input
+                id="address"
+                placeholder="Address"
+                type="text"
+                formControlName="address"
+            ></app-input>
+            <app-validation-message
+                [isInvalid]="isInvalid"
+                [control]="insertionForm.get('address')"
+            ></app-validation-message>
+        </div>
 
-    <label class="mt-4" for="postalCode">Postal Code</label>
-    <app-input
-        id="postalCode"
-        placeholder="Postal Code"
-        type="text"
-        formControlName="postalCode"
-    ></app-input>
+        <div class="w-1/2 flex flex-col mb-4">
+            <label class="mb-1" for="city">City</label>
+            <app-input
+                id="city"
+                placeholder="City"
+                type="text"
+                formControlName="city"
+            ></app-input>
+            <app-validation-message
+                [isInvalid]="isInvalid"
+                [control]="insertionForm.get('city')"
+            ></app-validation-message>
+        </div>
 
-    <!-- Property Size -->
-    <label class="mt-4" for="totalArea">Total Area</label>
-    <app-input
-        id="totalArea"
-        placeholder="Total Area"
-        type="number"
-        formControlName="totalArea"
-    ></app-input>
+        <div class="w-1/2 flex flex-col mb-4">
+            <label class="mb-1" for="province">Province</label>
+            <app-input
+                id="province"
+                placeholder="Province"
+                type="text"
+                formControlName="province"
+            ></app-input>
+            <app-validation-message
+                [isInvalid]="isInvalid"
+                [control]="insertionForm.get('province')"
+            ></app-validation-message>
+        </div>
 
-    <label class="mt-4" for="livingArea">Living Area</label>
-    <app-input
-        id="livingArea"
-        placeholder="Living Area"
-        type="number"
-        formControlName="livingArea"
-    ></app-input>
+        <div class="w-1/2 flex flex-col mb-4">
+            <label class="mb-1" for="postalCode">Postal Code</label>
+            <app-input
+                id="postalCode"
+                placeholder="Postal Code"
+                type="text"
+                formControlName="postalCode"
+            ></app-input>
+            <app-validation-message
+                [isInvalid]="isInvalid"
+                [control]="insertionForm.get('postalCode')"
+            ></app-validation-message>
+        </div>
+    </div>
 
-    <!-- Rooms -->
-    <label class="mt-4" for="bedrooms">Bedrooms</label>
-    <app-input
-        id="bedrooms"
-        placeholder="Bedrooms"
-        type="number"
-        formControlName="bedrooms"
-    ></app-input>
+    <app-separator class="my-10"></app-separator>
 
-    <label class="mt-4" for="bathrooms">Bathrooms</label>
-    <app-input
-        id="bathrooms"
-        placeholder="Bathrooms"
-        type="number"
-        formControlName="bathrooms"
-    ></app-input>
+    <app-section-title title="Rooms"></app-section-title>
+    <div class="flex flex-wrap">
+        <!-- Property Size -->
+        <div class="w-1/2 flex flex-col mb-4">
+            <label class="mb-1" for="totalArea">Total Area</label>
+            <app-input
+                id="totalArea"
+                placeholder="Total Area"
+                type="number"
+                formControlName="totalArea"
+            ></app-input>
+            <app-validation-message
+                [isInvalid]="isInvalid"
+                [control]="insertionForm.get('totalArea')"
+            ></app-validation-message>
+        </div>
 
-    <!-- Floor Information, Year Built, etc. -->
-    <!-- (Add additional inputs following the same pattern.) -->
+        <div class="w-1/2 flex flex-col mb-4">
+            <label class="mb-1" for="livingArea">Living Area</label>
+            <app-input
+                id="livingArea"
+                placeholder="Living Area"
+                type="number"
+                formControlName="livingArea"
+            ></app-input>
+        </div>
 
-    <!-- Property Condition Dropdown -->
-    <label class="mt-4" for="condition">Property Condition</label>
-    <select
-        id="condition"
-        formControlName="condition"
-        class="border rounded-md p-2"
-    >
-        <option value="">Select condition</option>
-        <option *ngFor="let cond of propertyConditions" [value]="cond">
-            {{ cond }}
-        </option>
-    </select>
+        <div class="w-1/2 flex flex-col mb-4">
+            <label class="mb-1" for="bedrooms">Bedrooms</label>
+            <app-input
+                id="bedrooms"
+                placeholder="Bedrooms"
+                type="number"
+                formControlName="bedrooms"
+            ></app-input>
+            <app-validation-message
+                [isInvalid]="isInvalid"
+                [control]="insertionForm.get('bedrooms')"
+            ></app-validation-message>
+        </div>
 
-    <!-- Amenities -->
-    <div class="mt-4 flex flex-wrap gap-4">
-        <label>
-            <input type="checkbox" formControlName="hasHeating" /> Heating
+        <div class="w-1/2 flex flex-col mb-4">
+            <label class="mb-1" for="bathrooms">Bathrooms</label>
+            <app-input
+                id="bathrooms"
+                placeholder="Bathrooms"
+                type="number"
+                formControlName="bathrooms"
+            ></app-input>
+            <app-validation-message
+                [isInvalid]="isInvalid"
+                [control]="insertionForm.get('bathrooms')"
+            ></app-validation-message>
+        </div>
+    </div>
+
+    <app-separator class="my-10"></app-separator>
+
+    <app-section-title title="Additional Information"></app-section-title>
+    <div class="flex flex-wrap">
+        <label class="w-1/2">
+            <input
+                class="align-middle aspect-square w-[18px] me-2"
+                type="checkbox"
+                formControlName="hasHeating"
+            />
+            Heating
         </label>
-        <label>
-            <input type="checkbox" formControlName="hasAirConditioning" /> Air
-            Conditioning
+        <label class="w-1/2">
+            <input
+                class="align-middle aspect-square w-[18px] me-2"
+                type="checkbox"
+                formControlName="hasAirConditioning"
+            />
+            Air Conditioning
         </label>
-        <label>
-            <input type="checkbox" formControlName="hasParking" /> Parking
+        <label class="w-1/2">
+            <input
+                class="align-middle aspect-square w-[18px] me-2"
+                type="checkbox"
+                formControlName="hasParking"
+            />
+            Parking
         </label>
-        <label>
-            <input type="checkbox" formControlName="hasElevator" /> Elevator
+        <label class="w-1/2">
+            <input
+                class="align-middle aspect-square w-[18px] me-2"
+                type="checkbox"
+                formControlName="hasElevator"
+            />
+            Elevator
         </label>
-        <label>
-            <input type="checkbox" formControlName="hasBalcony" /> Balcony
+        <label class="w-1/2">
+            <input
+                class="align-middle aspect-square w-[18px] me-2"
+                type="checkbox"
+                formControlName="hasBalcony"
+            />
+            Balcony
         </label>
-        <label>
-            <input type="checkbox" formControlName="hasGarden" /> Garden
+        <label class="w-1/2">
+            <input
+                class="align-middle aspect-square w-[18px] me-2"
+                type="checkbox"
+                formControlName="hasGarden"
+            />
+            Garden
         </label>
-        <label>
-            <input type="checkbox" formControlName="hasSwimmingPool" /> Swimming
-            Pool
+        <label class="w-1/2">
+            <input
+                class="align-middle aspect-square w-[18px] me-2"
+                type="checkbox"
+                formControlName="hasSwimmingPool"
+            />
+            Swimming Pool
         </label>
-        <label>
-            <input type="checkbox" formControlName="isFurnished" /> Furnished
+        <label class="w-1/2">
+            <input
+                class="align-middle aspect-square w-[18px] me-2"
+                type="checkbox"
+                formControlName="isFurnished"
+            />
+            Furnished
         </label>
     </div>
 
     <!-- Energy Rating -->
-    <label class="mt-4" for="energyRating">Energy Rating</label>
+    <label class="mt-4 mb-1" for="energyRating">Energy Rating</label>
     <app-input
         id="energyRating"
         placeholder="Energy Rating"
@@ -187,7 +317,16 @@
         formControlName="energyRating"
     ></app-input>
 
-    <button type="submit" class="mt-6 bg-blue-500 text-white p-2 rounded">
+    <button
+        type="submit"
+        class="mt-6 dark:bg-indigo-700 font-bold text-lg bg-blue-500 text-white p-2 rounded cursor-pointer flex justify-center items-center"
+    >
+        <div
+            *ngIf="submitting"
+            class="w-5 h-5 border-4 me-6 border-gray-200 border-t-4 border-t-blue-500 rounded-full animate-spin"
+        ></div>
+
         Submit
     </button>
+    <app-invalid-form *ngIf="isInvalid"></app-invalid-form>
 </form>

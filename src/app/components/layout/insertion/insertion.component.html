@@ -1,1 +1,83 @@
-<p>insertion works!</p>
+<ng-container *ngIf="insertion">
+    <div
+        class="md:w-[340px] md:h-[400px] h-[520px] my-2 dark:bg-zinc-900 dark:border-gray-700 dark:text-gray-300 bg-white shadow-2xl dark:hover:border-gray-500 hover:border-gray-300 rounded-xl border border-transparent hover:cursor-pointer p-2 flex flex-col mx-auto"
+        (click)="emitId(insertion)"
+    >
+        <div class="rounded-xl relative">
+            <div class="w-full">
+                <app-image-carousel
+                    [images]="insertion.photos"
+                ></app-image-carousel>
+            </div>
+            <span
+                class="absolute top-2 left-2 px-2 py-1 text-white font-bold text-sm bg-black opacity-50 rounded-md"
+            >
+                For
+                <span>{{
+                    insertion.listingType
+                        ? insertion.listingType.charAt(0).toUpperCase() +
+                          insertion.listingType.slice(1).toLowerCase()
+                        : ""
+                }}</span>
+            </span>
+        </div>
+
+        <div class="px-4 py-2 flex flex-col justify-between h-full">
+            <div>
+                <div>
+                    <p
+                        class="font-bold text-blue-700 dark:text-blue-500 text-xl mb-1"
+                    >
+                        <i class="fa-solid fa-euro-sign"></i>
+                        {{ insertion.price | number : "1.2-2" }}
+                    </p>
+                    <ul
+                        class="flex justify-start text-[14px] mb-4 text-gray-500"
+                    >
+                        <li
+                            class="border-gray-300 me-2 pe-2 flex items-center font-extrabold"
+                        >
+                            <i
+                                class="text-gray-400 dark:text-gray-300 me-2 fa-solid fa-bed"
+                            ></i
+                            >{{ insertion.bedrooms }}
+                        </li>
+                        <li
+                            class="border-gray-300 me-2 px-2 flex items-center font-extrabold"
+                        >
+                            <i
+                                class="text-gray-400 dark:text-gray-300 me-2 fa-solid fa-shower"
+                            ></i
+                            >{{ insertion.bathrooms }}
+                        </li>
+                        <li
+                            class="border-gray-300 me-2 px-2 flex items-center font-extrabold"
+                        >
+                            <i
+                                class="text-gray-400 dark:text-gray-300 me-2 fa-solid fa-arrows-left-right-to-line"
+                            ></i
+                            >{{ insertion.totalArea }} m²
+                        </li>
+                    </ul>
+                </div>
+                <div class="flex flex-col flex-wrap">
+                    <p class="font-bold text-lg">{{ insertion.title }}</p>
+                    <p class="text-gray-500">
+                        <i class="fa-solid me-1 fa-location-dot"></i>
+                        {{ insertion.city }}, {{ insertion.province }}
+                    </p>
+                </div>
+            </div>
+            <button
+                (click)="$event.stopPropagation(); openModal()"
+                class="font-bold text-blue-700 dark:text-gray-500 hover:bg-blue-600 hover:text-white hover:border-blue-600 border-2 rounded-sm py-1 cursor-pointer text-lg"
+            >
+                <i class="fa-solid me-6 fa-phone"></i>CALL
+            </button>
+        </div>
+    </div>
+    <app-call-modal
+        [isOpen]="isModalOpen"
+        (close)="closeModal()"
+    ></app-call-modal>
+</ng-container>
